@@ -16,10 +16,13 @@
 package com.cinchapi.deepstack.binary;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.cinchapi.common.io.ByteBuffers;
 
 /**
  * 
@@ -27,6 +30,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Jeff Nelson
  */
 public class Person {
+
+    public byte age;
+    public String name;
+
+    public Person(String name, byte age) {
+        this.name = name;
+        this.age = age;
+    }
 
     /**
      * Given a buffer of {@code bytes}, construct a {@link Person} object that
@@ -36,7 +47,12 @@ public class Person {
      * @return the {@link Person} encoded in the ByteBuffer
      */
     public static Person fromByteBuffer(ByteBuffer bytes) {
-        return null;
+        ByteBuffer nameBytes = ByteBuffers.slice(bytes, bytes.capacity() - 1);
+        String name = ByteBuffers.getUtf8String(nameBytes);
+        bytes.position(bytes.capacity() -1 );
+        byte age = bytes.get();
+        Person person = new Person(name, age);
+        return person;
     }
 
     /**
@@ -46,7 +62,12 @@ public class Person {
      * @return a {@link ByteBuffer} for this object
      */
     public ByteBuffer toByteBuffer() {
-        return null;
+        byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer bytes = ByteBuffer.allocate(nameBytes.length + 1);
+        bytes.put(nameBytes);
+        bytes.put(age);
+        bytes.flip();
+        return bytes;
     }
 
     @Override
@@ -62,6 +83,10 @@ public class Person {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static void main(String... args) {
+        System.out.println(Byte.MAX_VALUE);
     }
 
 }

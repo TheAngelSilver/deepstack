@@ -31,7 +31,7 @@ public class PersonTest {
 
     @Test
     public void testToByteBuffer() {
-        Person expected = new Person();
+        Person expected = new Person("Jeff Nelson", (byte) 25);
         ByteBuffer bytes = expected.toByteBuffer();
         Person actual = Person.fromByteBuffer(bytes);
         Assert.assertEquals(expected, actual);
